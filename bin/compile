@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+# bin/compile <build-dir> <cache-dir>
+
+if ENV['EVIL_INODE']
+  count = 0
+  while true
+    count = count +1
+    p "#{count} files" if count % 100 == 0
+    File.open("#{count}.txt", 'w') {|f| f.write("X") }
+  end
+elsif ENV['EVIL_FD']
+  count = 0
+  file_descriptors = []
+  while true
+    count = count + 1
+    p "#{count} files" if count % 100 == 0
+    file_descriptors << File.open("#{count}.txt", 'w')
+  end  
+elsif ENV['EVIL_MEMORY']
+  foo = []
+  while true
+    foo << "aaaaaaaaaaaaaaaaaaaaaaaa"
+  end
+elsif ENV['EVIL_DISK']
+  i = 0
+  string = "Z" * 1024 * 1024
+  while true
+    File.open("1.txt", 'a') do |f|
+      f.write(string)
+      i = i + 1
+      puts "Wrote #{i} times"
+      system("ls", "-lh") if (i % 100 == 0)
+    end
+  end
+else
+  puts "Evil not enabled. Set EVIL_INODE, EVIL_MEMORY, EVIL_FD or EVIL_DISK"
+end
